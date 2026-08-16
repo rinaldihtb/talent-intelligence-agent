@@ -4,3 +4,6 @@
 __*__
 *.sqlite
 *.log
+*.csv
+*.md
+!.README.md
