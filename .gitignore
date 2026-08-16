@@ -1,0 +1,6 @@
+.*
+!.gitignore
+!.env.example
+__*__
+*.sqlite
+*.log
