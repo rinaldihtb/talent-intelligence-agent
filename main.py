@@ -80,7 +80,14 @@ if __name__ == "__main__" :
 
         if prompt_U := st.chat_input("Hi! How can I help you?"):
             messages_history = st.session_state.get("messages", [])[HISTORY_CONTEXT_LENGTH:]
-            history = "\n".join([f'{msg["role"]}: {msg["content"]}' for msg in messages_history]) or " "
+
+            history = ''
+            if len(messages_history) > 0:
+                print(messages_history)
+                history = "\n\n".join(
+                    f"> History Ke-{i+1}. {msg['role']}: {msg['content']}"
+                    for i, msg in enumerate(messages_history)
+                ) or "::"
 
             with st.chat_message("user"):
                 st.markdown(prompt_U)
@@ -88,8 +95,9 @@ if __name__ == "__main__" :
             st.session_state.messages.append({"role": "user", "content": prompt_U})
 
             with st.chat_message("assistant"):
-                final_prompt = f"""User Question: {prompt_U}
-                History:\n{history}"""
+                final_prompt = f"{prompt_U}"
+                if history.strip():
+                    final_prompt += f"\n\n Recent Histories : \n\n{history}"
 
                 loading = st.empty()
 
@@ -98,20 +106,19 @@ if __name__ == "__main__" :
                         response = submit_prompt(
                             app,
                             final_prompt,
-                            app_config,
-                        )
-
+                            app_config)
                 loading.empty()
 
                 answer = response["answer"]
                 st.markdown(answer)
-                st.session_state.messages.append({"role": "assistant", "content": answer})
 
+            st.session_state.messages.append({"role": "assistant", "content": answer})
             with st.expander("**Tool Calls:**"):
                 st.code(response["tool_messages"])
 
-            with st.expander("**History Chat:**"):
-                st.code(history)
+            if history :
+                with st.expander("**History Chat:**"):
+                    st.code(history)
 
             with st.expander("**Usage Details:**"):
                 st.code(
