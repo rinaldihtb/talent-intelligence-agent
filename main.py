@@ -21,7 +21,7 @@ def create_app_supervisor():
 
 def submit_prompt(app, prompt, config):
     result = app.invoke({"messages":[
-        {"role": "user", "content": final_prompt},
+        {"role": "user", "content": prompt},
     ]}, config=config)
 
     answer = result["messages"][-1].content
@@ -94,7 +94,7 @@ if __name__ == "__main__" :
                 loading = st.empty()
 
                 with loading.container():
-                    with st.spinner("Loading.   .."):
+                    with st.spinner("Loading ..."):
                         response = submit_prompt(
                             app,
                             final_prompt,
